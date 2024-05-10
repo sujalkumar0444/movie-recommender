@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieRecommendor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        main {
+            max-width:100%;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #f0f0f0;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        /* h1 {
+            text-align: center;
+            color: #333;
+        } */
+
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form label {
+            font-size: 18px;
+            margin-right: 10px;
+            color: #333;
+        }
+
+        form input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        form button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .current-movie {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .current-movie img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .movie-container {
+        display: flex;
+        overflow-x: auto;
+        scroll-behavior: smooth; /* Add this line for smooth scrolling */
+        margin-bottom: 20px;
+    }
+
+        .movie-card {
+            flex: 0 0 auto;
+            width: 300px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background-color: #fff;
+            border-radius: 10px;
+        }
+
+        .movie-card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .scroll-button {
+            cursor: pointer;
+            font-size: 24px;
+            margin: 0 10px;
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        h2 {
+            text-align: left;
+            color: #282727;
+            margin-bottom: 10px;
+        }
+    </style>
+    
+</head>
+<body>
+    <header>
+        <h1>Hello, {{ user.username }}!</h1>
+    </header>
+
+    <!-- Search Form -->
+    <main>
+        <form method="post" action="{{ url_for('search', username=user.username) }}">
+            <label for="query">Search Movie:</label>
+            <input type="text" id="query" name="query" required>
+            <button type="submit">Search</button>
+        </form>
+
+        <!-- Display Current Movie -->
+        {% if current_movie %}
+        {% if current_movie|length > 0 %}
+            <div class="current-movie">
+                <h2 style="text-align: center;">Title: {{ current_movie.Title }}</h2>
+                <img src="{{ current_movie.Poster }}" alt="Movie Poster">
+                <div class="movie-details">
+                    <p>{{ current_movie.Plot }}</p>
+                    <p>Director: {{ current_movie.Director }}</p>
+                    <p>Genre: {{ current_movie.Genre }}</p>
+                    <p>IMDb Rating: {{ current_movie.imdbRating }}</p>
+                    <!-- Add more information as needed -->
+                </div>
+            </div>
+        {% else %}
+            <p>Movie not found</p>
+        {% endif %}
+
+        {% endif %}
+
+        <!-- Display Movies for Each Category -->
+        {% if movies_info %}
+        <h2>Recommendations for you:</h2>
+        <div class="movie-container">
+            {% for movie_info in movies_info %}
+                {% if movie_info.Poster and movie_info.Poster != 'N/A' %}
+                    <div class="movie-card">
+                        <h3>{{ movie_info.Title }} ({{ movie_info.Year }})</h3>
+                        <img src="{{ movie_info.Poster }}" alt="Movie Poster">
+                        <p>{{ movie_info.Plot }}</p>
+                        <p>Director: {{ movie_info.Director }}</p>
+                        <p>Genre: {{ movie_info.Genre }}</p>
+                        <p>IMDb Rating: {{ movie_info.imdbRating }}</p>
+                        <!-- Add more information as needed -->
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+        <h2>Trending:</h2>
+        <div class="movie-container">
+            {% for trending_movie_info in trending_movies_info %}
+                {% if trending_movie_info.Poster and trending_movie_info.Poster != 'N/A' %}
+                    <div class="movie-card">
+                        <h3>{{ trending_movie_info.Title }} ({{ trending_movie_info.Year }})</h3>
+                        <img src="{{ trending_movie_info.Poster }}" alt="Movie Poster">
+                        <p>{{ trending_movie_info.Plot }}</p>
+                        <p>Director: {{ trending_movie_info.Director }}</p>
+                        <p>Genre: {{ trending_movie_info.Genre }}</p>
+                        <p>IMDb Rating: {{ trending_movie_info.imdbRating }}</p>
+                        <!-- Add more information as needed -->
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <h2>Top 50:</h2>
+        <div class="movie-container">
+            {% for top_50_infoo in top_50_info %}
+                {% if top_50_infoo.Poster and top_50_infoo.Poster != 'N/A' %}
+                    <div class="movie-card">
+                        <h3>{{ top_50_infoo.Title }} ({{ top_50_infoo.Year }})</h3>
+                        <img src="{{ top_50_infoo.Poster }}" alt="Movie Poster">
+                        <p>{{ top_50_infoo.Plot }}</p>
+                        <p>Director: {{ top_50_infoo.Director }}</p>
+                        <p>Genre: {{ top_50_infoo.Genre }}</p>
+                        <p>IMDb Rating: {{ top_50_infoo.imdbRating }}</p>
+                        <!-- Add more information as needed -->
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+
+        <!-- Add more content based on your requirements -->
+    </main>
+
+    <script>
+        function scrollMovies(category, direction) {
+            const movieContainer = document.querySelector(`.${category}`);
+            movieContainer.scrollLeft += direction;
+        }
+    </script>
+</body>
+</html>
